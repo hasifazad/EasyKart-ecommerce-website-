@@ -1,0 +1,45 @@
+<div class="container">
+    <h2>Edit your Product</h2>
+</div>
+
+
+<section class="container">
+    <form action="/admin/edit-product/{{product._id}}" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="float-start pe-5 col-5">
+                <label for="" class="form-label mt-3">Product name</label>
+                <input type="text" name="productname" class="form-control" value="{{product.productname}}">
+
+
+                <label for="" class="form-label mt-3">Category</label>
+                <input type="text" name="category" class="form-control" value="{{product.category}}">
+
+
+                <label for="" class="form-label mt-3">Description</label>
+                <input type="text" name="description" class="form-control" value="{{product.description}}">
+
+
+                <label for="" class="form-label mt-3">Price</label>
+                <input type="text" name="price" class="form-control" value="{{product.price}}">
+                <br>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+
+
+            <div class="float-start pt-4 pb-4 ps-5 pe-5 m-2 col-4 bg-light text-center border">
+                <img class="m-3 text-center" src="/images/proimages/{{product._id}}.jpg" alt=""
+                    style="width: 150px; height: 150px" id="img">
+                <input type="file" name="Image" class="form-control" onchange="viewImage(event)">
+            </div>
+        </div>
+
+
+
+    </form>
+</section>
+
+<script>
+    function viewImage(event) {
+        document.getElementById('img').src = URL.createObjectURL(event.target.files[0])
+    }
+</script>

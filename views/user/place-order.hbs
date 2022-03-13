@@ -1,0 +1,100 @@
+<div class="container">
+    <h1>Enter Deliver Details</h1>
+    <form id="checkout-form">
+        <div class="float-start pe-5 col-7">
+            <input type="text" name="userId" value="{{user._id}}" hidden>
+            <label for="">Address</label>
+            <br>
+            <input class="form-control" name="address" type="text">
+            <br>
+            <label for="">Pincode</label>
+            <br>
+            <input class="form-control" name="pincode" type="text" name="" id="">
+            <br>
+            <label for="">Mobile</label>
+            <br>
+            <input class="form-control" name="mobile" type="text">
+        </div>
+
+        <div class="border float-start pt-4 pb-4 ps-5 pe-5 m-2 col-4 bg-light">
+            <h4>Total Amount : Rs.{{total}}</h4>
+            <label for="">Payment Method</label>
+            <br>
+            <br>
+            <input type="radio" name="payment" value="COD">
+            <label for="">COD</label>
+            <br>
+            <input type="radio" name="payment" value="OnlinePayment">
+            <label for="">Online payment</label>
+            <br>
+            <input type="text" name="total" value="{{total}}" hidden>
+            <button type="submit" class="btn btn-primary float-end">Checkout</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+
+    $("#checkout-form").submit((e) => {
+        e.preventDefault()
+        $.ajax({
+            url: '/place-order',
+            method: 'post',
+            data: $('#checkout-form').serialize(),
+            success: (response) => {
+                if (response.codSuccess) {
+                    location.href = '/order-successful'
+                } else {
+                    razorpayPayment(response)
+                }
+            }
+
+        })
+    })
+
+    function razorpayPayment(order) {
+        var options = {
+            "key": "rzp_test_hpfEAD3AmmxVo5",
+            "amount": order.amount,
+            "currency": "INR",
+            "name": "E-commerce",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.id,
+            "handler": function (response) {
+                verifyPayment(response, order)
+            },
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9999999999"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options)
+        rzp1.open()
+    }
+
+    function verifyPayment(payment, order) {
+        $.ajax({
+            url: '/verify-payment',
+            data: {
+                payment,
+                order
+            }, method: 'post',
+            success:(response)=>{
+                if(response.status){
+                    location.href = '/order-successful'
+                }else{
+                    alert('payment failed')
+                }
+            }
+        })
+    }
+</script>
